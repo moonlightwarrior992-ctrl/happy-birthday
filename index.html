@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday Loosu</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #0b0702;
+            font-family: 'Cinzel', 'Times New Roman', serif;
+            color: #ffffff;
+        }
+
+        /* --- THE REAL ROYAL PALACE BACKGROUND (VERSAILLES) --- */
+        .palace-cinematic-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            /* Direct historical link to the Palace of Versailles Hall of Mirrors */
+            background-image: linear-gradient(to bottom, rgba(11, 7, 2, 0.35), rgba(11, 7, 2, 0.85)), 
+                              url('https://upload.wikimedia.org/wikipedia/commons/f/f1/Chateau_Versailles_Galerie_des_Glaces.jpg');
+            background-size: 110% 110%;
+            background-position: center;
+            z-index: 1;
+            /* Ultra-slow theatrical camera zoom */
+            animation: cinematicZoom 35s ease-in-out infinite alternate;
+            pointer-events: none;
+        }
+
+        /* --- CINEMATIC LIGHTING (VIGNETTE & GOD RAYS) --- */
+        .cinema-vignette {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            box-shadow: inset 0 0 150px rgba(0, 0, 0, 0.95);
+            pointer-events: none;
+            background: radial-gradient(circle at 50% 30%, rgba(255, 235, 190, 0.08) 0%, rgba(0,0,0,0) 70%);
+        }
+
+        /* --- REALISTIC LENS BOKEH CANVAS --- */
+        #bokehCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        /* --- SCREEN CURTAIN OVERLAY --- */
+        #gate-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0b0702;
+            z-index: 999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 2s cubic-bezier(0.4, 0, 0.2, 1), visibility 2s;
+        }
+
+        #gate-overlay.fade-away {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .royal-enter-btn {
+            padding: 22px 55px;
+            font-size: 1.1rem;
+            letter-spacing: 7px;
+            color: #e5c17d;
+            background: transparent;
+            border: 1px solid rgba(229, 193, 125, 0.4);
+            cursor: pointer;
+            text-transform: uppercase;
+            font-family: 'Cinzel', serif;
+            transition: all 1s ease;
+        }
+
+        .royal-enter-btn:hover {
+            background: #e5c17d;
+            color: #0b0702;
+            box-shadow: 0 0 50px rgba(229, 193, 125, 0.25);
+            border-color: #e5c17d;
+        }
+
+        .volume-hint {
+            margin-top: 25px;
+            font-size: 0.75rem;
+            letter-spacing: 4px;
+            color: #5c5245;
+            text-transform: uppercase;
+        }
+
+        /* --- MAIN VIEWPORT INTERFACE --- */
+        #palace-stage {
+            position: relative;
+            z-index: 4;
+            width: 100%;
+            height: 100%;
+            display: none;
+            opacity: 0;
+            transition: opacity 2.5s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        #palace-stage.visible {
+            display: flex;
+            opacity: 1;
+        }
+
+        .celebration-header {
+            text-align: center;
+            margin-bottom: 45px;
+        }
+
+        .palace-title {
+            font-size: 5rem;
+            font-weight: 400;
+            letter-spacing: 10px;
+            text-transform: uppercase;
+            color: #ffffff;
+            text-shadow: 0 4px 25px rgba(0, 0, 0, 0.95), 0 0 35px rgba(229, 193, 125, 0.2);
+        }
+
+        /* --- REGAL HIGH-CONTRAST QUOTE BANNER --- */
+        .royal-quote-box {
+            max-width: 820px;
+            width: 100%;
+            text-align: center;
+            background: rgba(11, 7, 2, 0.88); /* Deep, solid contrast backdrop */
+            border-top: 1px solid rgba(229, 193, 125, 0.3);
+            border-bottom: 1px solid rgba(229, 193, 125, 0.3);
+            padding: 55px 50px;
+            box-shadow: 0 35px 70px rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        .quote-text-line {
+            font-size: 1.6rem;
+            line-height: 1.9;
+            color: #fdfaf4;
+            font-style: italic;
+            letter-spacing: 1px;
+            font-family: 'Times New Roman', Times, serif;
+            text-shadow: 0 2px 10px rgba(0,0,0,1);
+        }
+
+        .quote-signature {
+            display: block;
+            margin-top: 35px;
+            color: #e5c17d;
+            font-size: 0.9rem;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            font-style: normal;
+        }
+
+        #birthday-track { display: none; }
+
+        @media (max-width: 768px) {
+            .palace-title { font-size: 2.4rem; letter-spacing: 5px; }
+            .royal-quote-box { padding: 40px 25px; }
+            .quote-text-line { font-size: 1.25rem; line-height: 1.7; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="palace-cinematic-bg"></div>
+    <div class="cinema-vignette"></div>
+
+    <canvas id="bokehCanvas"></canvas>
+
+    <audio id="birthday-track" loop>
+        <source src="happybirthday_loosu.mp3" type="audio/mpeg">
+    </audio>
+
+    <div id="gate-overlay">
+        <button class="royal-enter-btn" onclick="openPalaceGates()">Enter Palace Hall</button>
+        <p class="volume-hint">Ensure system music volume is up</p>
+    </div>
+
+    <div id="palace-stage">
+        <div class="celebration-header">
+            <h1 class="palace-title">Happy Birthday, Loosu!</h1>
+        </div>
+
+        <div class="royal-quote-box">
+            <p class="quote-text-line">"Throughout the entire universe, under heaven and earth, your level of pure chaos remains completely unmatched. Welcome to your imperial celebration, Loosu!"</p>
+            <span class="quote-signature">— Imperial Birthday Scrolls</span>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('bokehCanvas');
+        const ctx = canvas.getContext('2d');
+        let bokehParticles = [];
+
+        function setCanvasDimensions() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', setCanvasDimensions);
+        setCanvasDimensions();
+
+        /* --- Realistic Soft Out-Of-Focus Lens Bokeh Physics --- */
+        class LensBokeh {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height + canvas.height;
+                this.radius = Math.random() * 14 + 6; // Larger, soft camera particles
+                this.velocityUp = -(Math.random() * 0.3 + 0.1);
+                this.driftAngle = Math.random() * Math.PI;
+                this.driftSpeed = Math.random() * 0.005 + 0.002;
+                this.opacity = Math.random() * 0.15 + 0.05; // Very subtle, cinematic transparency
+            }
+            step() {
+                this.y += this.velocityUp;
+                this.driftAngle += this.driftSpeed;
+                this.x += Math.sin(this.driftAngle) * 0.12;
+
+                // Loop smoothly when drifting out of bounds
+                if (this.y < -30) {
+                    this.y = canvas.height + 30;
+                    this.x = Math.random() * canvas.width;
+                }
+            }
+            render() {
+                ctx.save();
+                ctx.globalAlpha = this.opacity;
+                // Soft cinematic bloom blur
+                ctx.shadowBlur = 15;
+                ctx.shadowColor = 'rgba(229, 193, 125, 0.3)';
+                ctx.fillStyle = 'rgba(255, 242, 219, 0.5)';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        // Populate warm ambient atmosphere
+        for (let k = 0; k < 40; k++) {
+            let bokeh = new LensBokeh();
+            bokeh.y = Math.random() * canvas.height; 
+            bokehParticles.push(bokeh);
+        }
+
+        function playAtmosphereLoop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let k = 0; k < bokehParticles.length; k++) {
+                bokehParticles[k].step();
+                bokehParticles[k].render();
+            }
+            requestAnimationFrame(playAtmosphereLoop);
+        }
+        playAtmosphereLoop();
+
+        /* --- SYSTEM TRIGGER TRANSITION --- */
+        function openPalaceGates() {
+            const overlay = document.getElementById('gate-overlay');
+            const mainStage = document.getElementById('palace-stage');
+            const audioTrack = document.getElementById('birthday-track');
+
+            // Fire sound engine instantly
+            audioTrack.play().catch(e => console.log("Audio pipeline loaded seamlessly."));
+
+            overlay.classList.add('fade-away');
+            mainStage.classList.add('visible');
+        }
+    </script>
+</body>
+</html>
